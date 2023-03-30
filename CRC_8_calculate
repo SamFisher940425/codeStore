@@ -1,0 +1,26 @@
+#include <stdio.h>
+
+unsigned char test[7] = {0x39, 0x60, 0x00, 0x00, 0x00, 0x00, 0x00};
+unsigned char len = 7;
+
+int main(void) {
+
+    unsigned char crc_table[16] = {0x00, 0x2f, 0x5e, 0x71, 0xbc, 0x93,
+                                   0xe2, 0xcd, 0x57, 0x78, 0x09, 0x26,
+                                   0xeb, 0xc4, 0xb5, 0x9a};
+    unsigned char crc = 0x71;
+    unsigned char crc_H4 = 0x00;
+    unsigned char* ptr = test;
+
+    while (len--) {
+        crc_H4 = (unsigned char)((crc >> 4) & 0x0F);
+        crc = crc << 4;
+        crc = crc ^ crc_table[crc_H4 ^ ((*ptr >> 4) & 0x0F)];
+        crc_H4 = (unsigned char)((crc >> 4) & 0x0F);
+        crc = crc << 4;
+        crc = crc ^ crc_table[crc_H4 ^ (*ptr & 0x0F)];
+        ptr++;
+    }
+    printf("0x%x\n", crc);
+    return 0;
+}
