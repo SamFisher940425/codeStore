@@ -1,0 +1,30 @@
+#include <stdio.h>
+
+int main(void) {
+    unsigned char crc = 0x00;
+    unsigned char i;
+    unsigned int j;
+    unsigned char poly = 0x2F;
+
+    for (j = 0; j < 256; j++) {
+        crc = 0x00;
+        for (i = 0x80; i != 0; i = i >> 1) {
+            if ((crc & 0x80) != 0) {
+                crc = crc << 1;
+                crc = crc ^ poly;
+            } else {
+                crc = crc << 1;
+            }
+            if ((j & i) != 0) {
+                crc = crc ^ poly;
+            }
+        }
+        printf("0x");
+        if (crc < 0x10) {
+            printf("0");
+        }
+        printf("%x,", crc);
+    }
+    printf("\n");
+    return 0;
+}
